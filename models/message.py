@@ -1,14 +1,28 @@
 from datetime import date
+from typing import Optional
+
+from models.mailing_list import MailingList
 
 
-def create_message(
-    message_id: int,
-    list_id: int,
-    text: str
-) -> dict:
-    return {
-        "id": message_id,
-        "list_id": list_id,
-        "text": text,
-        "date": date.today().isoformat(),
-    }
+class Message:
+    """Сообщение, созданное для списка рассылки."""
+
+    def __init__(
+        self,
+        message_id: int,
+        mailing_list: MailingList,
+        text: str,
+        sent_date: Optional[str] = None,
+    ) -> None:
+        if not text.strip():
+            raise ValueError("Сообщение не может быть пустым.")
+        self.id = message_id
+        self.mailing_list = mailing_list
+        self.text = text.strip()
+        self.date = sent_date or date.today().isoformat()
+
+    def __str__(self) -> str:
+        return (
+            f"{self.id}. Список: {self.mailing_list.name}; "
+            f"{self.text}; {self.date}"
+        )

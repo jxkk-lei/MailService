@@ -1,40 +1,31 @@
-from storage.json_storage import load_data, save_data
-from services.mailing_service import (
-    add_user,
-    add_mailing_list,
-    subscribe,
-    send_message,
-)
+from services.mailing_service import MailService
+from storage.json_storage import JsonStorage
 
 
-def show_data(data: dict) -> None:
+def show_data(service: MailService) -> None:
     print("\nПользователи:")
-    for user in data["users"]:
-        print(f'{user["id"]}. {user["name"]}')
+    for user in service.users:
+        print(user)
 
     print("\nСписки рассылок:")
-    for mailing_list in data["mailing_lists"]:
-        print(
-            f'{mailing_list["id"]}. '
-            f'{mailing_list["name"]} '
-            f'(автор: {mailing_list["owner_id"]})'
-        )
+    for mailing_list in service.mailing_lists:
+        print(mailing_list)
+
+    print("\nПодписки:")
+    for subscription in service.subscriptions:
+        print(subscription)
 
     print("\nСообщения:")
-    for message in data["messages"]:
-        print(
-            f'{message["id"]}. '
-            f'Список: {message["list_id"]}; '
-            f'{message["text"]}; '
-            f'{message["date"]}'
-        )
+    for message in service.messages:
+        print(message)
 
 
 def main() -> None:
+    storage = JsonStorage()
     try:
-        data = load_data()
-    except ValueError as error:
-        print(error)
+        service = storage.load()
+    except (ValueError, OSError) as error:
+        print(f"Ошибка загрузки данных: {error}")
         return
 
     while True:
@@ -46,38 +37,39 @@ def main() -> None:
         print("5. Просмотреть данные")
         print("0. Выход")
 
-        choice = input("Выберите действие: ")
+        choice = input("Выберите действие: ").strip()
 
         try:
             if choice == "1":
                 name = input("Имя пользователя: ")
-                add_user(data, name)
-                save_data(data)
-                print("Пользователь добавлен.")
+                user = service.add_user(name)
+                storage.save(service)
+                print(f"Пользователь добавлен: {user}")
 
             elif choice == "2":
                 name = input("Название списка: ")
                 owner_id = int(input("ID автора: "))
-                add_mailing_list(data, name, owner_id)
-                save_data(data)
-                print("Список рассылки создан.")
+                mailing_list = service.add_mailing_list(name, owner_id)
+                storage.save(service)
+                print(f"Список создан: {mailing_list}")
 
             elif choice == "3":
                 user_id = int(input("ID пользователя: "))
                 list_id = int(input("ID списка: "))
-                subscribe(data, user_id, list_id)
-                save_data(data)
-                print("Подписка оформлена.")
+                subscription = service.subscribe(user_id, list_id)
+                storage.save(service)
+                print(f"Подписка оформлена: {subscription}")
 
             elif choice == "4":
                 list_id = int(input("ID списка: "))
-                text = input("Текст сообщения: ")
-                count = send_message(data, list_id, text)
-                save_data(data)
-                print(f"Сообщение отправлено {count} подписчикам.")
+                message_text = input("Текст сообщения: ")
+                message, count = service.send_message(list_id, message_text)
+                storage.save(service)
+                print(f"Сообщение сохранено и отправлено {count} подписчикам.")
+                print(message)
 
             elif choice == "5":
-                show_data(data)
+                show_data(service)
 
             elif choice == "0":
                 print("Работа MailService завершена.")
@@ -86,8 +78,8 @@ def main() -> None:
             else:
                 print("Неизвестная команда.")
 
-        except ValueError as error:
-            print("Ошибка:", error)
+        except (ValueError, KeyError) as error:
+            print(f"Ошибка: {error}")
 
 
 if __name__ == "__main__":

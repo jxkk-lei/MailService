@@ -1,113 +1,86 @@
-from models.user import create_user
-from models.mailing_list import create_mailing_list
-from models.message import create_message
+from typing import Optional, Tuple
+
+from models.mailing_list import MailingList
+from models.message import Message
+from models.subscription import Subscription
+from models.user import User
 
 
-def get_next_id(items: list[dict]) -> int:
-    if not items:
-        return 1
+class MailService:
+    """Управляет пользователями, подписками и рассылками."""
 
-    return max(item["id"] for item in items) + 1
+    def __init__(
+        self,
+        users: Optional[list[User]] = None,
+        mailing_lists: Optional[list[MailingList]] = None,
+        subscriptions: Optional[list[Subscription]] = None,
+        messages: Optional[list[Message]] = None,
+    ) -> None:
+        self.users = users or []
+        self.mailing_lists = mailing_lists or []
+        self.subscriptions = subscriptions or []
+        self.messages = messages or []
 
+    @staticmethod
+    def _next_id(items: list) -> int:
+        return max((item.id for item in items), default=0) + 1
 
-def add_user(data: dict, name: str) -> None:
-    if not name.strip():
-        raise ValueError("Имя пользователя не может быть пустым.")
-
-    user = create_user(
-        get_next_id(data["users"]),
-        name.strip(),
-    )
-    data["users"].append(user)
-
-
-def add_mailing_list(
-    data: dict,
-    name: str,
-    owner_id: int
-) -> None:
-    if not name.strip():
-        raise ValueError("Название списка не может быть пустым.")
-
-    if not any(
-        user["id"] == owner_id
-        for user in data["users"]
-    ):
+    def get_user(self, user_id: int) -> User:
+        for user in self.users:
+            if user.id == user_id:
+                return user
         raise ValueError("Пользователь не найден.")
 
-    mailing_list = create_mailing_list(
-        get_next_id(data["mailing_lists"]),
-        name.strip(),
-        owner_id,
-    )
-    data["mailing_lists"].append(mailing_list)
-
-
-def subscribe(
-    data: dict,
-    user_id: int,
-    list_id: int
-) -> None:
-    user_exists = any(
-        user["id"] == user_id
-        for user in data["users"]
-    )
-    list_exists = any(
-        mailing_list["id"] == list_id
-        for mailing_list in data["mailing_lists"]
-    )
-
-    if not user_exists:
-        raise ValueError("Пользователь не найден.")
-
-    if not list_exists:
+    def get_mailing_list(self, list_id: int) -> MailingList:
+        for mailing_list in self.mailing_lists:
+            if mailing_list.id == list_id:
+                return mailing_list
         raise ValueError("Список рассылки не найден.")
 
-    for subscription in data["subscriptions"]:
-        if (
-            subscription["user_id"] == user_id
-            and subscription["list_id"] == list_id
-        ):
-            raise ValueError("Пользователь уже подписан.")
+    def add_user(self, name: str) -> User:
+        user = User(self._next_id(self.users), name)
+        self.users.append(user)
+        return user
 
-    data["subscriptions"].append({
-        "user_id": user_id,
-        "list_id": list_id,
-    })
+    def add_mailing_list(self, name: str, owner_id: int) -> MailingList:
+        owner = self.get_user(owner_id)
+        mailing_list = MailingList(
+            self._next_id(self.mailing_lists),
+            name,
+            owner,
+        )
+        self.mailing_lists.append(mailing_list)
+        return mailing_list
 
+    def subscribe(self, user_id: int, list_id: int) -> Subscription:
+        user = self.get_user(user_id)
+        mailing_list = self.get_mailing_list(list_id)
 
-def send_message(
-    data: dict,
-    list_id: int,
-    text: str
-) -> int:
-    mailing_list = next(
-        (
-            item for item in data["mailing_lists"]
-            if item["id"] == list_id
-        ),
-        None,
-    )
+        for subscription in self.subscriptions:
+            if (
+                subscription.user.id == user_id
+                and subscription.mailing_list.id == list_id
+            ):
+                raise ValueError("Пользователь уже подписан.")
 
-    if mailing_list is None:
-        raise ValueError("Список рассылки не найден.")
+        subscription = Subscription(user, mailing_list)
+        self.subscriptions.append(subscription)
+        return subscription
 
-    if not text.strip():
-        raise ValueError("Сообщение не может быть пустым.")
+    def send_message(self, list_id: int, text: str) -> Tuple[Message, int]:
+        mailing_list = self.get_mailing_list(list_id)
+        subscribers = [
+            subscription
+            for subscription in self.subscriptions
+            if subscription.mailing_list.id == list_id
+        ]
+        if not subscribers:
+            raise ValueError("В списке нет подписчиков.")
 
-    subscribers = [
-        item for item in data["subscriptions"]
-        if item["list_id"] == list_id
-    ]
-
-    if not subscribers:
-        raise ValueError("В списке нет подписчиков.")
-
-    message = create_message(
-        get_next_id(data["messages"]),
-        list_id,
-        text.strip(),
-    )
-    data["messages"].append(message)
-
-    return len(subscribers)
+        message = Message(
+            self._next_id(self.messages),
+            mailing_list,
+            text,
+        )
+        self.messages.append(message)
+        return message, len(subscribers)
