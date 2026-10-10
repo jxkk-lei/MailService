@@ -1,3 +1,5 @@
-class User:
-    def __init__(self, username):
-        self.username = username
+def create_user(user_id: int, name: str) -> dict:
+    return {
+        "id": user_id,
+        "name": name,
+    }
