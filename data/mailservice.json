@@ -1,6 +1,29 @@
 {
-    "users": [],
-    "mailing_lists": [],
-    "subscriptions": [],
-    "messages": []
+    "users": [
+        {
+            "id": 1,
+            "name": "el"
+        }
+    ],
+    "mailing_lists": [
+        {
+            "id": 1,
+            "name": "list",
+            "owner_id": 1
+        }
+    ],
+    "subscriptions": [
+        {
+            "user_id": 1,
+            "list_id": 1
+        }
+    ],
+    "messages": [
+        {
+            "id": 1,
+            "list_id": 1,
+            "text": "rrrr",
+            "date": "2026-10-10"
+        }
+    ]
 }
