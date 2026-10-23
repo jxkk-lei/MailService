@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+
+{% block title %}{% if mailing_list %}{{ mailing_list.name|default:"Без названия" }}{% else %}Рассылка не найдена{% endif %} — MailService{% endblock %}
+
+{% block content %}
+    <a class="back-link" href="{% url 'mailing_lists:list' %}">← К спискам рассылок</a>
+    {% if mailing_list %}
+        <section class="detail-panel">
+            <div class="detail-heading">
+                <div>
+                    <span class="eyebrow">РАССЫЛКА № {{ mailing_list.id }}</span>
+                    <h1>{{ mailing_list.name|default:"Без названия" }}</h1>
+                </div>
+                {% include "mailing_lists_web/includes/status.html" with subscriber_count=subscribers|length only %}
+            </div>
+            <p>Владелец: <a href="{% url 'users:detail' mailing_list.owner.id %}">{{ mailing_list.owner.name|default:"Без имени" }}</a>
+            </p>
+            <div class="card-metrics">
+                <span>Подписчики: <strong>{{ subscribers|length }}</strong>
+                </span>
+                <span>Сообщения: <strong>{{ messages|length }}</strong>
+                </span>
+            </div>
+        </section>
+        <div class="detail-columns">
+            <section class="surface">
+                <h2>Подписчики <span class="inline-count">{{ subscribers|length }}</span>
+                </h2>
+                <ul class="entity-list">
+                    {% for subscriber in subscribers %}
+                        <li>
+                            <span class="avatar" aria-hidden="true">{{ subscriber.name|first|upper }}</span>
+                            <a href="{% url 'users:detail' subscriber.id %}">{{ subscriber.name|default:"Без имени" }}</a>
+                        </li>
+                    {% empty %}
+                        <li class="muted">У этой рассылки пока нет подписчиков.</li>
+                    {% endfor %}
+                </ul>
+            </section>
+            <section class="surface">
+                <h2>Сообщения <span class="inline-count">{{ messages|length }}</span>
+                </h2>
+                <ul class="entity-list">
+                    {% for row in messages %}
+                        <li>
+                            <div>
+                                <a href="{% url 'messages:detail' row.message.id %}">{{ row.message.text|truncatechars:100 }}</a>
+                                <small class="muted d-block">{{ row.sent_date|date:"d.m.Y"|default:"Дата не указана" }}</small>
+                            </div>
+                        </li>
+                    {% empty %}
+                        <li class="muted">В этой рассылке пока нет сообщений.</li>
+                    {% endfor %}
+                </ul>
+            </section>
+        </div>
+    {% else %}
+        <section class="empty-state error-state">
+            <span class="error-code">404</span>
+            <h1>Рассылка не найдена</h1>
+            <p>Список рассылки с указанным идентификатором отсутствует.</p>
+        </section>
+    {% endif %}
+{% endblock %}

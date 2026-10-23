@@ -1,3 +1,4 @@
 pytest
+pytest-django
 flake8
 Django==5.2.*

@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block title %}{% if message %}Сообщение № {{ message.id }}{% else %}Сообщение не найдено{% endif %} — MailService{% endblock %}
+
+{% block content %}
+    <a class="back-link" href="{% url 'messages:list' %}">← К сообщениям</a>
+    {% if message %}
+        <article class="detail-panel message-detail">
+            <span class="eyebrow">ИСТОРИЯ РАССЫЛКИ</span>
+            <h1>Сообщение № {{ message.id }}</h1>
+            <div class="message-meta">
+                <a class="list-tag" href="{% url 'mailing_lists:detail' message.mailing_list.id %}">{{ message.mailing_list.name|default:"Без названия" }}</a>
+                <span class="muted">{{ sent_date|date:"d.m.Y"|default:"Дата не указана" }}</span>
+            </div>
+            <p class="message-text">{{ message.text }}</p>
+            <p class="muted">Владелец рассылки: <a href="{% url 'users:detail' message.mailing_list.owner.id %}">{{ message.mailing_list.owner.name|default:"Без имени" }}</a>
+            </p>
+        </article>
+    {% else %}
+        <section class="empty-state error-state">
+            <span class="error-code">404</span>
+            <h1>Сообщение не найдено</h1>
+            <p>Сообщение с указанным идентификатором отсутствует.</p>
+        </section>
+    {% endif %}
+{% endblock %}

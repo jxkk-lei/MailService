@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+
+{% block title %}Списки рассылок — MailService{% endblock %}
+
+{% block content %}
+    <div class="page-heading">
+        <div>
+            <span class="eyebrow">ВАШИ КАНАЛЫ ОБЩЕНИЯ</span>
+            <h1>Списки рассылок</h1>
+            <p>Владельцы, читатели и сообщения каждой рассылки.</p>
+        </div>
+        <span class="count-label">Всего: {{ mailing_lists|length }}</span>
+    </div>
+    <div class="mailing-grid">
+        {% for item in mailing_lists %}
+            {% include "mailing_lists_web/includes/card.html" with mailing_list=item.mailing_list subscriber_count=item.subscriber_count message_count=item.message_count only %}
+        {% empty %}
+            <div class="empty-state">
+                <h2>Списки рассылок отсутствуют.</h2>
+                <p>Здесь появятся рассылки, сохранённые в сервисе.</p>
+            </div>
+        {% endfor %}
+    </div>
+{% endblock %}

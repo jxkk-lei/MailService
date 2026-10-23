@@ -1,31 +1,24 @@
 from django.shortcuts import render
 
-from web_data import get_collection, load_data
+from web_data import load_service, message_rows
 
 
 def list_view(request):
-    data = load_data()
+    service = load_service()
+    context = {"messages": message_rows(service.messages)}
+    return render(request, "messages_web/list.html", context)
 
-    mailing_lists = {
-        mailing_list["id"]: mailing_list
-        for mailing_list in get_collection(data, "mailing_lists", "lists")
-    }
 
-    messages = []
-
-    for message in get_collection(data, "messages"):
-        mailing_list = mailing_lists.get(message.get("list_id"))
-
-        messages.append({
-            "id": message.get("id"),
-            "text": message.get("text", ""),
-            "date": message.get("date", ""),
-            "list_name": mailing_list.get("name", "Неизвестный список")
-            if mailing_list else "Неизвестный список",
-        })
-
+def detail_view(request, message_id):
+    service = load_service()
+    message = next(
+        (item for item in service.messages if item.id == message_id), None,
+    )
+    context = (
+        message_rows([message])[0] if message is not None
+        else {"message": None, "sent_date": None}
+    )
     return render(
-        request,
-        "messages_web/list.html",
-        {"messages": messages},
+        request, "messages_web/detail.html", context,
+        status=404 if message is None else 200,
     )

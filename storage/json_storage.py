@@ -66,6 +66,9 @@ class JsonStorage:
         except (json.JSONDecodeError, OSError) as error:
             raise ValueError("Не удалось загрузить данные проекта.") from error
 
+        if not isinstance(data, dict):
+            raise ValueError("Файл данных имеет неправильную структуру.")
+
         try:
             users_by_id = {
                 item["id"]: User(item["id"], item["name"])

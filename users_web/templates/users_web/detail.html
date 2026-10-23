@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+
+{% block title %}{% if profile %}{{ profile.name|default:"Без имени" }}{% else %}Пользователь не найден{% endif %} — MailService{% endblock %}
+
+{% block content %}
+    <a class="back-link" href="{% url 'users:list' %}">← К пользователям</a>
+    {% if profile %}
+        <section class="detail-panel">
+            <span class="eyebrow">ПОЛЬЗОВАТЕЛЬ № {{ profile.id }}</span>
+            <h1>{{ profile.name|default:"Без имени" }}</h1>
+            <p class="muted">Автор рассылок и читатель в MailService.</p>
+        </section>
+        <div class="detail-columns">
+            <section class="surface">
+                <h2>Собственные рассылки <span class="inline-count">{{ mailing_lists|length }}</span>
+                </h2>
+                <ul class="entity-list">
+                    {% for item in mailing_lists %}
+                        <li>
+                            <a href="{% url 'mailing_lists:detail' item.id %}">{{ item.name|default:"Без названия" }}</a>
+                        </li>
+                    {% empty %}
+                        <li class="muted">У пользователя пока нет собственных рассылок.</li>
+                    {% endfor %}
+                </ul>
+            </section>
+            <section class="surface">
+                <h2>Подписки <span class="inline-count">{{ subscriptions|length }}</span>
+                </h2>
+                <ul class="entity-list">
+                    {% for item in subscriptions %}
+                        <li>
+                            <a href="{% url 'mailing_lists:detail' item.mailing_list.id %}">{{ item.mailing_list.name|default:"Без названия" }}</a>
+                        </li>
+                    {% empty %}
+                        <li class="muted">У пользователя пока нет подписок.</li>
+                    {% endfor %}
+                </ul>
+            </section>
+        </div>
+    {% else %}
+        <section class="empty-state error-state">
+            <span class="error-code">404</span>
+            <h1>Пользователь не найден</h1>
+            <p>Пользователь с указанным идентификатором отсутствует.</p>
+        </section>
+    {% endif %}
+{% endblock %}

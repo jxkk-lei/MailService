@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Главная — MailService{% endblock %}
+
+{% block content %}
+    <section class="hero">
+        <div class="hero-copy">
+            <span class="eyebrow">СЕРВИС ПОЛЬЗОВАТЕЛЬСКИХ РАССЫЛОК</span>
+            <h1>Ближе к тем,<br>кто вас читает.</h1>
+            <p>Пользователи, рассылки и сообщения — в одном месте.
+                Следите за подписками и находите нужную информацию за пару кликов.</p>
+            <a class="btn btn-primary" href="{% url 'mailing_lists:list' %}">Открыть рассылки <span aria-hidden="true">↗</span>
+            </a>
+        </div>
+        <div class="hero-visual" aria-hidden="true">
+            <span class="visual-orbit orbit-one">
+            </span>
+            <span class="visual-orbit orbit-two">
+            </span>
+            <div class="envelope-tile">
+                <img src="{% static 'homepage/img/logo.svg' %}" alt="" width="116" height="116">
+            </div>
+            <span class="visual-tag tag-top">На связи с читателями</span>
+            <span class="visual-tag tag-bottom">
+                <span class="status-dot">
+                </span> Всё в одном месте</span>
+        </div>
+    </section>
+    <div class="section-heading">
+        <div>
+            <span class="eyebrow">ОБЗОР СЕРВИСА</span>
+            <h2>Ваша аудитория в цифрах</h2>
+        </div>
+        <span class="muted">Актуальные данные</span>
+    </div>
+    <section class="stats-grid" aria-label="Статистика сервиса">
+        <a class="stat-card" href="{% url 'mailing_lists:list' %}">
+            <span>Рассылки</span>
+            <strong>{{ mailing_lists|length }}</strong>
+            <span class="stat-caption">Списки и их владельцы <span aria-hidden="true">↗</span>
+            </span>
+        </a>
+        <a class="stat-card" href="{% url 'users:list' %}">
+            <span>Пользователи</span>
+            <strong>{{ users|length }}</strong>
+            <span class="stat-caption">Участники сервиса <span aria-hidden="true">↗</span>
+            </span>
+        </a>
+        <a class="stat-card" href="{% url 'messages:list' %}">
+            <span>Сообщения</span>
+            <strong>{{ messages|length }}</strong>
+            <span class="stat-caption">История сообщений <span aria-hidden="true">↗</span>
+            </span>
+        </a>
+        <a class="stat-card" href="{% url 'subscriptions:list' %}">
+            <span>Подписки</span>
+            <strong>{{ subscriptions|length }}</strong>
+            <span class="stat-caption">Связи с читателями <span aria-hidden="true">↗</span>
+            </span>
+        </a>
+    </section>
+    <aside class="info-banner">
+        <span class="info-icon" aria-hidden="true">i</span>
+        <div>
+            <strong>У каждой рассылки — своя история</strong>
+            <p>Откройте карточку рассылки, чтобы посмотреть её владельца, читателей и сообщения.</p>
+        </div>
+        <a href="{% url 'mailing_lists:list' %}">К рассылкам <span aria-hidden="true">→</span>
+        </a>
+    </aside>
+{% endblock %}

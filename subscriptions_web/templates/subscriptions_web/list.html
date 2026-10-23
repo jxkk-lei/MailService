@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+
+{% block title %}Подписки — MailService{% endblock %}
+
+{% block content %}
+    <div class="page-heading">
+        <div>
+            <span class="eyebrow">НА СВЯЗИ С ЧИТАТЕЛЯМИ</span>
+            <h1>Подписки</h1>
+            <p>Кто и какие рассылки читает.</p>
+        </div>
+        <span class="count-label">Всего: {{ subscriptions|length }}</span>
+    </div>
+    <div class="table-panel">
+        <table class="table entity-table">
+            <caption class="visually-hidden">Подписки пользователей на рассылки</caption>
+            <thead>
+                <tr>
+                    <th scope="col">Пользователь</th>
+                    <th scope="col">Список рассылки</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in subscriptions %}
+                    <tr>
+                        <td>
+                            <span class="avatar" aria-hidden="true">{{ item.user.name|first|upper }}</span>
+                            <a href="{% url 'users:detail' item.user.id %}">{{ item.user.name|default:"Без имени" }}</a>
+                        </td>
+                        <td>
+                            <a class="list-tag" href="{% url 'mailing_lists:detail' item.mailing_list.id %}">{{ item.mailing_list.name|default:"Без названия" }}</a>
+                        </td>
+                    </tr>
+                {% empty %}
+                    <tr>
+                        <td colspan="2" class="empty-cell">Подписки отсутствуют.</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}

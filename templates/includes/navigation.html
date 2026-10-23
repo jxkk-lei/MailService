@@ -1,0 +1,18 @@
+{% load static %}
+<header class="site-header">
+    <nav class="container main-navigation" aria-label="Основная навигация">
+        <a class="brand" href="{% url 'homepage:index' %}">
+            <img src="{% static 'homepage/img/logo.svg' %}" alt="" width="38" height="38">
+            <span>MailService</span>
+        </a>
+        {% with namespace=request.resolver_match.namespace %}
+            <div class="navigation-links">
+                <a href="{% url 'homepage:index' %}"{% if namespace == 'homepage' %} class="active" aria-current="page"{% endif %}>Главная</a>
+                <a href="{% url 'mailing_lists:list' %}"{% if namespace == 'mailing_lists' %} class="active" aria-current="page"{% endif %}>Рассылки</a>
+                <a href="{% url 'users:list' %}"{% if namespace == 'users' %} class="active" aria-current="page"{% endif %}>Пользователи</a>
+                <a href="{% url 'messages:list' %}"{% if namespace == 'messages' %} class="active" aria-current="page"{% endif %}>Сообщения</a>
+                <a href="{% url 'subscriptions:list' %}"{% if namespace == 'subscriptions' %} class="active" aria-current="page"{% endif %}>Подписки</a>
+            </div>
+        {% endwith %}
+    </nav>
+</header>

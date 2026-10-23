@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+
+{% block title %}Пользователи — MailService{% endblock %}
+
+{% block content %}
+    <div class="page-heading">
+        <div>
+            <span class="eyebrow">АУДИТОРИЯ СЕРВИСА</span>
+            <h1>Пользователи</h1>
+            <p>Авторы рассылок и их читатели.</p>
+        </div>
+        <span class="count-label">Всего: {{ users|length }}</span>
+    </div>
+    <div class="table-panel">
+        <table class="table entity-table">
+            <caption class="visually-hidden">Пользователи сервиса</caption>
+            <thead>
+                <tr>
+                    <th scope="col">ID</th>
+                    <th scope="col">Имя</th>
+                    <th scope="col">
+                        <span class="visually-hidden">Профиль</span>
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for user in users %}
+                    <tr>
+                        <td class="muted">#{{ user.id }}</td>
+                        <td>
+                            <span class="avatar" aria-hidden="true">{{ user.name|first|upper }}</span>
+                            <a href="{% url 'users:detail' user.id %}">{{ user.name|default:"Без имени" }}</a>
+                        </td>
+                        <td class="text-end">
+                            <a href="{% url 'users:detail' user.id %}">Открыть профиль →</a>
+                        </td>
+                    </tr>
+                {% empty %}
+                    <tr>
+                        <td colspan="3" class="empty-cell">Пользователи отсутствуют.</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}

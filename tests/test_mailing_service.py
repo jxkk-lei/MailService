@@ -1,5 +1,3 @@
-import json
-
 import pytest
 
 from models.mailing_list import MailingList

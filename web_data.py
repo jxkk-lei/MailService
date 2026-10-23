@@ -1,28 +1,35 @@
-import json
+"""Загрузка существующей объектной модели для веб-представлений."""
+
+import logging
+from datetime import date
 from pathlib import Path
 
-BASE_DIR = Path(__file__).resolve().parent
-DATA_FILE = BASE_DIR / "data" / "mailservice.json"
+from services.mailing_service import MailService
+from storage.json_storage import JsonStorage
+
+DATA_FILE = Path(__file__).resolve().parent / "data" / "mailservice.json"
+logger = logging.getLogger(__name__)
 
 
-def load_data():
+def load_service():
+    """Читать JSON через хранилище ПР3, не создавая файл при GET-запросе."""
     if not DATA_FILE.exists():
-        return {}
+        return MailService()
 
     try:
-        with DATA_FILE.open("r", encoding="utf-8") as file:
-            data = json.load(file)
-    except (OSError, json.JSONDecodeError):
-        return {}
-
-    return data if isinstance(data, dict) else {}
+        return JsonStorage(DATA_FILE).load()
+    except ValueError as error:
+        logger.warning("Не удалось прочитать данные MailService: %s", error)
+        return MailService()
 
 
-def get_collection(data, *names):
-    for name in names:
-        value = data.get(name)
-
-        if isinstance(value, list):
-            return value
-
-    return []
+def message_rows(messages):
+    """Подготовить даты к фильтру date без изменения объектов Message."""
+    rows = []
+    for message in messages:
+        try:
+            sent_date = date.fromisoformat(message.date)
+        except (TypeError, ValueError):
+            sent_date = None
+        rows.append({"message": message, "sent_date": sent_date})
+    return rows

@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+
+{% block title %}Сообщения — MailService{% endblock %}
+
+{% block content %}
+    <div class="page-heading">
+        <div>
+            <span class="eyebrow">ИСТОРИЯ РАССЫЛОК</span>
+            <h1>Сообщения</h1>
+            <p>Тексты сообщений и связанные с ними рассылки.</p>
+        </div>
+        <span class="count-label">Всего: {{ messages|length }}</span>
+    </div>
+    <div class="table-panel">
+        <table class="table entity-table">
+            <caption class="visually-hidden">Сообщения рассылок</caption>
+            <thead>
+                <tr>
+                    <th scope="col">ID</th>
+                    <th scope="col">Текст сообщения</th>
+                    <th scope="col">Дата</th>
+                    <th scope="col">Рассылка</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in messages %}
+                    <tr>
+                        <td class="muted">#{{ row.message.id }}</td>
+                        <td class="message-preview">
+                            <a href="{% url 'messages:detail' row.message.id %}">{{ row.message.text|truncatechars:100 }}</a>
+                        </td>
+                        <td class="date-cell">{{ row.sent_date|date:"d.m.Y"|default:"Дата не указана" }}</td>
+                        <td>
+                            <a class="list-tag" href="{% url 'mailing_lists:detail' row.message.mailing_list.id %}">{{ row.message.mailing_list.name|default:"Без названия" }}</a>
+                        </td>
+                    </tr>
+                {% empty %}
+                    <tr>
+                        <td colspan="4" class="empty-cell">Сообщения отсутствуют.</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}

@@ -1,0 +1,19 @@
+<article class="mailing-card">
+    <div class="card-top">
+        <span class="mail-icon" aria-hidden="true">✉</span>
+        {% include "mailing_lists_web/includes/status.html" with subscriber_count=subscriber_count only %}
+    </div>
+    <h2>
+        <a href="{% url 'mailing_lists:detail' mailing_list.id %}">{{ mailing_list.name|default:"Без названия" }}</a>
+    </h2>
+    <p class="muted">Владелец: <a href="{% url 'users:detail' mailing_list.owner.id %}">{{ mailing_list.owner.name|default:"Без имени" }}</a>
+    </p>
+    <div class="card-metrics">
+        <span>Подписчики: <strong>{{ subscriber_count }}</strong>
+        </span>
+        <span>Сообщения: <strong>{{ message_count }}</strong>
+        </span>
+    </div>
+    <a class="card-link" href="{% url 'mailing_lists:detail' mailing_list.id %}">Открыть рассылку <span aria-hidden="true">→</span>
+    </a>
+</article>

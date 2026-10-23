@@ -1,0 +1,69 @@
+{
+  "pages": [
+    {
+      "path": "/",
+      "status": 200,
+      "title": "Главная — MailService"
+    },
+    {
+      "path": "/lists/",
+      "status": 200,
+      "title": "Списки рассылок — MailService"
+    },
+    {
+      "path": "/lists/1/",
+      "status": 200,
+      "title": "list — MailService"
+    },
+    {
+      "path": "/users/",
+      "status": 200,
+      "title": "Пользователи — MailService"
+    },
+    {
+      "path": "/users/1/",
+      "status": 200,
+      "title": "el — MailService"
+    },
+    {
+      "path": "/messages/",
+      "status": 200,
+      "title": "Сообщения — MailService"
+    },
+    {
+      "path": "/messages/1/",
+      "status": 200,
+      "title": "Сообщение № 1 — MailService"
+    },
+    {
+      "path": "/subscriptions/",
+      "status": 200,
+      "title": "Подписки — MailService"
+    },
+    {
+      "path": "/lists/999999/",
+      "status": 404,
+      "title": "Рассылка не найдена — MailService"
+    }
+  ],
+  "widths": [
+    320,
+    390,
+    768,
+    1440
+  ],
+  "browser": "155.0.8059.85",
+  "internal_links_checked": [
+    "/",
+    "/lists/",
+    "/lists/1/",
+    "/messages/",
+    "/messages/1/",
+    "/subscriptions/",
+    "/users/",
+    "/users/1/"
+  ],
+  "javascript_year_checked": true,
+  "page_errors": [],
+  "failed_requests": []
+}

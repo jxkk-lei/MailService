@@ -1,0 +1,33 @@
+Проверка MailService после ПР6 — 24.10.2026
+
+Окружение: Python 3.14.3, Django 5.2.18, pytest 9.1.1.
+Все команды выполнялись из корня проекта через venv/bin/python.
+
+python manage.py check
+System check identified no issues (0 silenced).
+
+python -m pytest -v
+27 passed, 39 subtests passed.
+6 исходных тестов предметной области и 21 веб-тест.
+
+python -m flake8 . --extend-exclude=venv
+Код завершения: 0, замечаний нет.
+
+python manage.py test homepage
+Ran 21 tests. OK.
+
+python manage.py makemigrations --check --dry-run
+No changes detected.
+
+git diff --check
+Замечаний нет.
+
+Chrome: проверены 8 основных страниц с HTTP 200 и отсутствующая
+рассылка с HTTP 404. Проверены все внутренние ссылки, доступность
+изображений и CSS, работа JavaScript текущего года.
+На ширинах 320, 390, 768 и 1440 px горизонтального переполнения нет.
+Ошибок JavaScript и неудавшихся запросов ресурсов нет.
+Подробности: browser_verification.json. Снимки: screenshots/.
+
+PDF-отчёт: 2 страницы. Номер варианта не включён по просьбе студента.
+Выполнение обеих тем Яндекс Практикума подтверждено студентом в чате.

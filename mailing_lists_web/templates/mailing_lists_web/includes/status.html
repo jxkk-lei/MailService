@@ -1,0 +1,9 @@
+{% if subscriber_count %}
+    <span class="mailing-status status-active">
+        <span class="status-dot" aria-hidden="true">
+        </span>Есть подписчики</span>
+{% else %}
+    <span class="mailing-status status-empty">
+        <span class="status-dot" aria-hidden="true">
+        </span>Нет подписчиков</span>
+{% endif %}
